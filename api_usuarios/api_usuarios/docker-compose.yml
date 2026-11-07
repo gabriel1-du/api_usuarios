@@ -1,33 +1,13 @@
-version: '3.8'
-
 services:
-  db:
+  mysql-db:
     image: mysql:8.0
-    container_name: mysql_usuarios
-    restart: always
+    container_name: mysql-usuarios-local
     environment:
-      MYSQL_DATABASE: usuarios_db
       MYSQL_ROOT_PASSWORD: hola123
+      MYSQL_DATABASE: usuarios_db
     ports:
       - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    command: --default-authentication-plugin=mysql_native_password
-
-  api:
-    build: .
-    container_name: api_usuarios
-    restart: always
-    ports:
-      - "8080:8080"
-    environment:
-      # Sobrescribe spring.datasource.url para apuntar al contenedor 'db'
-      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/usuarios_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=hola123
-    depends_on:
-      - db
-
+      - db_data_local:/var/lib/mysql
 volumes:
-  db_data:
+  db_data_local:
