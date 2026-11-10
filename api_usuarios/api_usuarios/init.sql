@@ -1,58 +1,32 @@
-CREATE TABLE MEDIOS_PAGO (
-    id_medio_pago BIGINT AUTO_INCREMENT PRIMARY KEY,
-    nombre_medio VARCHAR(50) NOT NULL,
-    activo BOOLEAN DEFAULT TRUE
+-- 1. Tabla REGIONES
+CREATE TABLE REGIONES (
+    id_region BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre_region VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE CARRITOS (
-    id_carrito BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario BIGINT NOT NULL, 
-    fecha_creacion DATETIME NOT NULL,
-    total DECIMAL(10,2) DEFAULT 0.00,
-    INDEX idx_carrito_usuario (id_usuario)
+-- 2. Tabla COMUNAS
+CREATE TABLE COMUNAS (
+    id_comuna BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre_comuna VARCHAR(100) NOT NULL,
+    id_region BIGINT NOT NULL,
+    CONSTRAINT fk_comunas_regiones FOREIGN KEY (id_region) REFERENCES REGIONES (id_region) ON DELETE CASCADE
 );
 
-CREATE TABLE PRODUCTOS_CARRITO (
-    id_producto_carrito BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_carrito BIGINT NOT NULL,
-    id_producto BIGINT NOT NULL, 
-    cantidad INT NOT NULL,
-    precio_unitario DECIMAL(10,2) NOT NULL,
-    CONSTRAINT fk_prod_carrito FOREIGN KEY (id_carrito) REFERENCES CARRITOS(id_carrito) ON DELETE CASCADE
-);
-
-CREATE TABLE LISTAS_DESEOS (
-    id_lista_deseos BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario BIGINT NOT NULL, 
-    fecha_creacion DATETIME NOT NULL,
-    INDEX idx_lista_usuario (id_usuario)
-);
-
-CREATE TABLE PRODUCTOS_LISTA_DESEOS (
-    id_prod_lista_deseos BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_lista_deseos BIGINT NOT NULL,
-    id_producto BIGINT NOT NULL, 
-    fecha_agregado DATETIME NOT NULL,
-    CONSTRAINT fk_prod_lista_deseos FOREIGN KEY (id_lista_deseos) REFERENCES LISTAS_DESEOS(id_lista_deseos) ON DELETE CASCADE
-);
-
-CREATE TABLE HISTORIAL_COMPRAS (
-    id_historial BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario BIGINT NOT NULL, 
-    INDEX idx_historial_usuario (id_usuario)
-);
-
-CREATE TABLE BOLETAS (
-    id_boleta BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario BIGINT NOT NULL,
-    id_historial BIGINT NOT NULL, 
-    id_carrito BIGINT NOT NULL,   
-    id_medio_pago BIGINT NOT NULL,
-    monto_total DECIMAL(10,2) NOT NULL,
-    fecha_emision DATETIME NOT NULL,
-    rut_comprador VARCHAR(12) NOT NULL,
-    nombre_comprador VARCHAR(150) NOT NULL,
-    CONSTRAINT fk_boleta_historial FOREIGN KEY (id_historial) REFERENCES HISTORIAL_COMPRAS(id_historial),
-    CONSTRAINT fk_boleta_carrito FOREIGN KEY (id_carrito) REFERENCES CARRITOS(id_carrito),
-    CONSTRAINT fk_boleta_medio_pago FOREIGN KEY (id_medio_pago) REFERENCES MEDIOS_PAGO(id_medio_pago)
+-- 3. Tabla USUARIOS
+CREATE TABLE USUARIOS (
+    id_usuario BIGINT AUTO_INCREMENT PRIMARY KEY,
+    p_nombre VARCHAR(50) NOT NULL,
+    s_nombre VARCHAR(50) NOT NULL,
+    p_apellido VARCHAR(50) NOT NULL,
+    s_apellido VARCHAR(50) NOT NULL,
+    correo_elec VARCHAR(100) NOT NULL UNIQUE,
+    num_telefono VARCHAR(20) NOT NULL,
+    rut_dv VARCHAR(1) NOT NULL,
+    rut_cuerpo VARCHAR(9) NOT NULL,
+    contrasena VARCHAR(255) NOT NULL,
+    permiso_admin BOOLEAN NOT NULL DEFAULT FALSE,
+    id_region BIGINT NOT NULL,
+    id_comuna BIGINT NOT NULL,
+    CONSTRAINT fk_usuarios_regiones FOREIGN KEY (id_region) REFERENCES REGIONES (id_region),
+    CONSTRAINT fk_usuarios_comunas FOREIGN KEY (id_comuna) REFERENCES COMUNAS (id_comuna)
 );
