@@ -1,7 +1,8 @@
 services:
   mysql-db:
     image: mysql:8.0
-    container_name: mysql-usuarios-local
+    container_name: api-usuarios-local
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: hola123
       MYSQL_DATABASE: usuarios_db
@@ -9,5 +10,8 @@ services:
       - "3306:3306"
     volumes:
       - db_data_local:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
 volumes:
   db_data_local:
+ 
