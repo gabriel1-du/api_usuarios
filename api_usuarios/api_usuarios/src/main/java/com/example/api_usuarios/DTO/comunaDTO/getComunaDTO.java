@@ -1,4 +1,4 @@
-package com.example.api_usuarios.DTO.usuarioDTO.comunaDTO;
+package com.example.api_usuarios.DTO.comunaDTO;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

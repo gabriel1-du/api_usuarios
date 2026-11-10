@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.api_usuarios.Model.Comuna;
+import com.example.api_usuarios.DTO.comunaDTO.getComunaDTO;
+import com.example.api_usuarios.DTO.comunaDTO.putComunaDTO;
+import com.example.api_usuarios.DTO.comunaDTO.saveComunaDTO;
 import com.example.api_usuarios.Service.ComunaService;
 
 @RestController
@@ -27,9 +29,9 @@ public class ComunasController {
 
     // metodos get
     @GetMapping("/")
-    public ResponseEntity<List<Comuna>> getAllComunas() {
+    public ResponseEntity<List<getComunaDTO>> getAllComunas() {
 
-        List<Comuna> comunas = comunaService.getAllComunas();
+        List<getComunaDTO> comunas = comunaService.getAllComunas();
 
         return new ResponseEntity<>(comunas, HttpStatus.OK);
     }
@@ -37,7 +39,7 @@ public class ComunasController {
     @GetMapping("/{id_comuna}")
     public ResponseEntity<?> getComunabyId(@PathVariable Long id_comuna) {
         try {
-            Comuna comuna = comunaService.getComunaById(id_comuna);
+            getComunaDTO comuna = comunaService.getComunaById(id_comuna);
             return ResponseEntity.ok(comuna);
         } catch (RuntimeException e) {
 
@@ -48,10 +50,10 @@ public class ComunasController {
 
     // metodos POST
     @PostMapping("/")
-    public ResponseEntity<?> saveComuna(@RequestBody Comuna comuna) {
+    public ResponseEntity<?> saveComuna(@RequestBody saveComunaDTO comuna) {
         try {
             // comuna queda guardado en el save
-            Comuna save = comunaService.saveComuna(comuna);
+            getComunaDTO save = comunaService.saveComuna(comuna);
             return ResponseEntity.ok(save);
 
         } catch (RuntimeException e) {
@@ -64,10 +66,10 @@ public class ComunasController {
 
     // metodos PUT
     @PutMapping("/{id_comuna}")
-    public ResponseEntity<?> putComuna(@RequestBody Comuna comuna, @PathVariable Long id_comuna) {
+    public ResponseEntity<?> putComuna(@RequestBody putComunaDTO comuna, @PathVariable Long id_comuna) {
         try {
 
-            Comuna comuna_actualizada = comunaService.putComuna(comuna, id_comuna);
+            getComunaDTO comuna_actualizada = comunaService.putComuna(comuna, id_comuna);
             return ResponseEntity.ok(comuna_actualizada);
 
         } catch (RuntimeException e) {
