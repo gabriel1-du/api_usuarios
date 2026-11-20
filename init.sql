@@ -30,3 +30,17 @@ CREATE TABLE USUARIOS (
     CONSTRAINT fk_usuarios_regiones FOREIGN KEY (id_region) REFERENCES REGIONES (id_region),
     CONSTRAINT fk_usuarios_comunas FOREIGN KEY (id_comuna) REFERENCES COMUNAS (id_comuna)
 );
+
+
+-- 1. Insertar Regiones
+INSERT INTO REGIONES (nombre_region) VALUES 
+('Región Metropolitana de Santiago'),
+('Región de Valparaíso');
+
+-- 2. Insertar Comunas (asociadas a id_region = 1 y 2)
+INSERT INTO COMUNAS (nombre_comuna, id_region) VALUES 
+('Maipú', 1),
+('Santiago', 1),
+('Viña del Mar', 2);
+
+
