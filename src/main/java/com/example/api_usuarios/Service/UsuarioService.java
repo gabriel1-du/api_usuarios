@@ -18,6 +18,8 @@ public interface UsuarioService {
     public getUsuarioDTO getUsuarioById(Long id_usuario); // Por id (sin contrasena)
 
     public getUsuarioDTOAdmin getUsuarioByIdAdmin(Long id_usuario); // Por id (con contrasena)
+
+    public getUsuarioDTO getUsuarioByEmail(String correo_elec); // Por correo electronico (sin contrasena)
     // --- FIN GET
 
     // Metodos POST

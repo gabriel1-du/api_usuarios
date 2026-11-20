@@ -86,6 +86,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         return usuarioDTOMapper.toGetUsuarioDTOAdmin(usuario);
     }
+
+    @Override
+    public getUsuarioDTO getUsuarioByEmail(String correo_elec) {
+        Usuario usuario = usuarioRepository.findByCorreo_elec(correo_elec)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con correo: " + correo_elec));
+
+        return usuarioDTOMapper.toGetUsuarioDTO(usuario);
+    }
     // --- FIN GET
 
 

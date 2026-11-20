@@ -62,6 +62,16 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    @GetMapping("/email/{correo_elec}")
+    public ResponseEntity<?> getUsuarioByEmail(@PathVariable String correo_elec) {
+        try {
+            getUsuarioDTO usuario = usuarioService.getUsuarioByEmail(correo_elec);
+            return ResponseEntity.ok(usuario);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
     // ----- fin metodos get
 
 
