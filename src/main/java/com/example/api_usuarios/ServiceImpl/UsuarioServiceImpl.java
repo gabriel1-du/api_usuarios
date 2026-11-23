@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.api_usuarios.DTO.login.LoginMaper;
+import com.example.api_usuarios.DTO.login.loginBody;
 import com.example.api_usuarios.DTO.usuarioDTO.UsuarioDTOMapper;
 import com.example.api_usuarios.DTO.usuarioDTO.getUsuarioDTO;
 import com.example.api_usuarios.DTO.usuarioDTO.getUsuarioDTOAdmin;
@@ -37,6 +39,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     private UsuarioDTOMapper usuarioDTOMapper;
+
+    @Autowired
+    private LoginMaper loginMaper;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -88,11 +93,19 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public getUsuarioDTO getUsuarioByEmail(String correo_elec) {
-        Usuario usuario = usuarioRepository.findByCorreo_elec(correo_elec)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con correo: " + correo_elec));
+    public loginBody getUsuarioByEmail(loginBody loginBody) {
+        // Conversion del DTO recibido a entidad de criterio de busqueda
+        Usuario criterio = loginMaper.toEntity(loginBody);
 
-        return usuarioDTOMapper.toGetUsuarioDTO(usuario);
+        if (criterio == null || criterio.getCorreo_elec() == null || criterio.getCorreo_elec().isBlank()) {
+            throw new RuntimeException("El correo electronico es obligatorio");
+        }
+
+        Usuario usuario = usuarioRepository.findByCorreo_elec(criterio.getCorreo_elec())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con correo: " + criterio.getCorreo_elec()));
+
+        // Retorna correo + contrasena cifrada para el API Gateway
+        return loginMaper.toLoginBody(usuario);
     }
     // --- FIN GET
 

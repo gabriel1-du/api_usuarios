@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.api_usuarios.DTO.login.loginBody;
 import com.example.api_usuarios.DTO.usuarioDTO.getUsuarioDTO;
 import com.example.api_usuarios.DTO.usuarioDTO.getUsuarioDTOAdmin;
 import com.example.api_usuarios.DTO.usuarioDTO.postUsuarioDTO;
@@ -63,11 +65,11 @@ public class UsuarioController {
         }
     }
 
-    @GetMapping("/email/{correo_elec}")
-    public ResponseEntity<?> getUsuarioByEmail(@PathVariable String correo_elec) {
+    @GetMapping("/email")
+    public ResponseEntity<?> getUsuarioByEmail(@ModelAttribute loginBody loginBody) {
         try {
-            getUsuarioDTO usuario = usuarioService.getUsuarioByEmail(correo_elec);
-            return ResponseEntity.ok(usuario);
+            loginBody credenciales = usuarioService.getUsuarioByEmail(loginBody);
+            return ResponseEntity.ok(credenciales);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

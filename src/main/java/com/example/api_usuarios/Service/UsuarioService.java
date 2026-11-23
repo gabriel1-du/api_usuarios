@@ -2,6 +2,7 @@ package com.example.api_usuarios.Service;
 
 import java.util.List;
 
+import com.example.api_usuarios.DTO.login.loginBody;
 import com.example.api_usuarios.DTO.usuarioDTO.getUsuarioDTO;
 import com.example.api_usuarios.DTO.usuarioDTO.getUsuarioDTOAdmin;
 import com.example.api_usuarios.DTO.usuarioDTO.postUsuarioDTO;
@@ -19,7 +20,7 @@ public interface UsuarioService {
 
     public getUsuarioDTOAdmin getUsuarioByIdAdmin(Long id_usuario); // Por id (con contrasena)
 
-    public getUsuarioDTO getUsuarioByEmail(String correo_elec); // Por correo electronico (sin contrasena)
+    public loginBody getUsuarioByEmail(loginBody loginBody); // Credenciales (correo + hash) para el API Gateway
     // --- FIN GET
 
     // Metodos POST
