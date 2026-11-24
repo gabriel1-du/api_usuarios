@@ -1,0 +1,5 @@
+.git
+target
+.env
+otros
+*.md

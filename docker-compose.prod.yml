@@ -1,0 +1,25 @@
+# ============================================================
+# docker-compose.prod.yml - Despliegue en EC2 (producción)
+# La BD es un RDS de AWS: NO se levanta MySQL local.
+# Las credenciales se leen de .env (mismo directorio).
+# ============================================================
+
+services:
+  api-usuarios-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-usuarios-prod
+    restart: unless-stopped
+
+    # Inyecta DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD y SERVER_PORT
+    # dentro del contenedor. Spring los usa en application.properties.
+    env_file:
+      - .env
+
+    environment:
+      # Marca del entorno (la palabra "prod" requerida)
+      SPRING_PROFILES_ACTIVE: prod
+
+    ports:
+      - "${SERVER_PORT:-8080}:${SERVER_PORT:-8080}"

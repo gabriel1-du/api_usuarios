@@ -5,8 +5,8 @@ COPY pom.xml .
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Etapa 2: Ejecución
-FROM eclipse-temurin:21-jre-alpine
+# Etapa 2: Ejecución (JRE 21, sin Alpine para evitar problemas con JDBC/RDS)
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 # Copia el JAR generado desde la etapa de construcción
 COPY --from=build /app/target/api_usuarios-0.0.1-SNAPSHOT.jar app.jar
