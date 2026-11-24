@@ -12,6 +12,10 @@ services:
     container_name: api-usuarios-prod
     restart: unless-stopped
 
+    # Tope real de RAM: 75% de una t3.micro (1 GB) = 768 MiB.
+    # La JVM ve este limite y con MaxRAMPercentage=75 usa ~576 MiB de heap.
+    mem_limit: 768m
+
     # Inyecta DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD y SERVER_PORT
     # dentro del contenedor. Spring los usa en application.properties.
     env_file:
