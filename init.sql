@@ -31,6 +31,14 @@ CREATE TABLE USUARIOS (
     CONSTRAINT fk_usuarios_comunas FOREIGN KEY (id_comuna) REFERENCES COMUNAS (id_comuna)
 );
 
+--tabla para auditoria
+CREATE TABLE auditoria_eventos (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  evento VARCHAR(100) NOT NULL,
+  referencia_id VARCHAR(100) NOT NULL,
+  fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 -- 1. Insertar Regiones
 INSERT INTO REGIONES (nombre_region) VALUES 
