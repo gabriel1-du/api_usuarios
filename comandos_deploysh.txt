@@ -1,0 +1,7 @@
+bash -n deploy.sh
+./deploy.sh --help
+./deploy.sh --check
+./deploy.sh master --dry-run
+
+-- para correr en la instancia
+./deploy.sh master
