@@ -19,7 +19,17 @@ COMPOSE_FILE="docker-compose.prod.yml"
 SERVICIO="api-usuarios-prod"
 
 usage() {
-  sed -n '4,11p' "$0"
+  cat <<'EOF'
+# ============================================================
+# deploy.sh - Despliegue de api_usuarios en EC2 con docker compose
+#
+# Uso:
+#   ./deploy.sh [rama]              Despliega de verdad
+#   ./deploy.sh [rama] --check      Solo valida entorno/.env/compose (no modifica nada)
+#   ./deploy.sh [rama] --dry-run    Muestra lo que haría, sin git pull ni docker up
+#   ./deploy.sh --help
+# ============================================================
+EOF
 }
 
 while [[ $# -gt 0 ]]; do
@@ -34,7 +44,7 @@ done
 
 log() { printf '[deploy] %s\n' "$*"; }
 
-# Ejuta el comando, o solo lo muestra en modo check/dry-run
+# Ejecuta el comando, o solo lo muestra en modo check/dry-run
 run() {
   if [[ "$MODO" == "check" || "$MODO" == "dry-run" ]]; then
     printf '[simulado]'; printf ' %q' "$@"; printf '\n'
@@ -46,7 +56,7 @@ run() {
 log "Modo: ${MODO} | rama: ${RAMA} | compose: ${COMPOSE_FILE}"
 
 # --- 1. HERRAMIENTAS ---
-for CMD in git docker; do
+for CMD in git docker sudo; do
   if ! command -v "${CMD}" >/dev/null 2>&1; then
     log "ERROR: no encontré '${CMD}' en el PATH"
     exit 1
@@ -93,6 +103,16 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   exit 1
 fi
 
+if ! git remote get-url origin >/dev/null 2>&1; then
+  log "ERROR: no existe el remote 'origin' en este repositorio"
+  exit 1
+fi
+
+# Solo avisa de cambios en archivos versionados (.env y deploy.sh sin track no cuentan)
+if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
+  log "ADVERTENCIA: hay cambios locales sin commitear; git checkout/pull podría fallar"
+fi
+
 if ! git rev-parse --verify --quiet "refs/heads/${RAMA}" >/dev/null; then
   log "La rama local '${RAMA}' no existe; se creará desde origin/${RAMA}"
   run git fetch origin "${RAMA}"
@@ -105,11 +125,13 @@ run git pull origin "${RAMA}"
 
 # --- 4. CONSTRUCCIÓN Y ARRANQUE ---
 run sudo docker compose -f "${COMPOSE_FILE}" up -d --build
-run sudo docker image prune -f
+# Prune limitado al proyecto (si la imagen no tiene la etiqueta, no borra nada)
+run sudo docker image prune -f --filter "label=com.docker.compose.project=api_usuarios"
 
 # --- 5. COMPROBACIÓN (solo en modo real) ---
 if [[ "$MODO" == "normal" ]]; then
-  PUERTO=$(grep -E '^SERVER_PORT=' .env | head -1 | cut -d= -f2)
+  # Quita comillas y espacios por si el .env viene con SERVER_PORT="8080"
+  PUERTO=$(grep -E '^SERVER_PORT=' .env | head -1 | cut -d= -f2 | tr -d '"\047' | tr -d '[:space:]')
   PUERTO="${PUERTO:-8080}"
 
   if command -v curl >/dev/null 2>&1; then

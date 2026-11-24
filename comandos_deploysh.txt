@@ -1,4 +1,6 @@
-bash -n deploy.sh
+chmod +x deploy.sh
+
+
 ./deploy.sh --help
 ./deploy.sh --check
 ./deploy.sh master --dry-run
