@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.api_usuarios.Auditoria.AuditoriaProducer;
 import com.example.api_usuarios.DTO.login.LoginMaper;
 import com.example.api_usuarios.DTO.login.loginBody;
 import com.example.api_usuarios.DTO.usuarioDTO.UsuarioDTOMapper;
@@ -51,6 +52,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     private RestClientConfig rest;
+
+    @Autowired
+    private AuditoriaProducer auditoriaProducer;
 
 
     // metodos GET
@@ -126,6 +130,16 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         // Guardar entidad localmente en la base de datos de usuarios
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+        // --- AUDITORIA SQS: un fallo nunca debe abortar la creacion del usuario ---
+        try {
+            // Nota: la entidad usa getId_usuario() (no getIdUsuario())
+            auditoriaProducer.enviarEvento(
+                    "USUARIO_CREADO",
+                    String.valueOf(usuarioGuardado.getId_usuario()));
+        } catch (Exception e) {
+            System.err.println("Advertencia: usuario creado, pero falló el evento de auditoría. Detalle: " + e.getMessage());
+        }
 
         // --- INICIO DE COMUNICACIÓN CON API_COMPRAS ---
         try {

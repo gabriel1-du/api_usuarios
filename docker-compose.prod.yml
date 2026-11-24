@@ -24,6 +24,9 @@ services:
     environment:
       # Marca del entorno (la palabra "prod" requerida)
       SPRING_PROFILES_ACTIVE: prod
+      AWS_REGION: ${AWS_REGION}
+      AWS_SQS_AUDITORIA_URL: ${AWS_SQS_AUDITORIA_URL}
+      
 
     ports:
       - "${SERVER_PORT:-8080}:${SERVER_PORT:-8080}"
